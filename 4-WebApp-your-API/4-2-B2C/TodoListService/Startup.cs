@@ -43,12 +43,19 @@ namespace TodoListService
             },
             options => { Configuration.Bind("AzureAdB2C", options); });
 
+            services.AddCors(o => o.AddPolicy("OpenCors", builder =>
+            {
+                builder.AllowAnyOrigin()
+                       .AllowAnyMethod()
+                       .AllowAnyHeader();
+            }));
+
             services.AddControllers();
             services.AddAuthorization(options =>
             {
-                // Create policy to check for the scope 'read'
+                // Create policy to check for the scope 'demo.read'
                 options.AddPolicy("ReadScope",
-                    policy => policy.Requirements.Add(new ScopesRequirement("read")));
+                    policy => policy.Requirements.Add(new ScopesRequirement("demo.read")));
             });
         }
 
@@ -68,6 +75,7 @@ namespace TodoListService
                 app.UseHsts();
             }
 
+            app.UseCors("OpenCors");
             app.UseHttpsRedirection();
 
             app.UseRouting();
